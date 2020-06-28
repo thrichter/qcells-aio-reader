@@ -12,7 +12,7 @@ using System.Threading;
 
 namespace qcells_aio_reader
 {
-    class Program
+    public class Program
     {
 
         private static InfluxDBClient influxClient;
