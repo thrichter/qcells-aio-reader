@@ -23,13 +23,12 @@ namespace qcells_aio_reader
         private static string ret_policy_longterm = "pvRetPolicyLongterm";
         private static string measurement_points = "AIO";
         private static string measurement_PVmonthly = "PVmonthly";
-        private static SemaphoreSlim  sema = new SemaphoreSlim(1);
+        
 
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
             while (true)
             {
-                await sema.WaitAsync();
                 try
                 {
                     var config = new ConfigurationBuilder()
@@ -40,19 +39,15 @@ namespace qcells_aio_reader
                     influxDbName = config["influx_db_name"];
                     influxDbNameLongterm = config["influx_db_name_longterm"];
                     aio_url = config["aio_url"];
-
-                    var values = await FetchValuesFromAIO();
-                    await WriteDataToInfluxDb(values);
+                  
+                    WriteDataToInfluxDb().Wait();
+                    Thread.Sleep(60000); //wait a minute
                 }
                 catch (Exception ex)
                 {
                     Console.Write(ex.Message);
                 }
-                finally
-                {
-                    sema.Release();
-                }
-                await Task.Delay(60000);
+
             }
         }
 
@@ -242,10 +237,11 @@ namespace qcells_aio_reader
             }
         }
 
-        private static async Task WriteDataToInfluxDb(AIO_Values values)
+        private static async Task WriteDataToInfluxDb()
         {
             try
             {
+                AIO_Values values = await FetchValuesFromAIO();
                 //first the current data point
                 bool success = await influxClient.CreateDatabaseAsync(influxDbName);  //create db if not exist
                 if (success)
