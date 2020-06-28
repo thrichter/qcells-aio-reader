@@ -25,7 +25,7 @@ namespace qcells_aio_reader
         private static string measurement_PVmonthly = "PVmonthly";
         
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             while (true)
             {
