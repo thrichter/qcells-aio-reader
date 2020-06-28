@@ -27,19 +27,12 @@ namespace qcells_aio_reader
 
         public static void Main(string[] args)
         {
+            ReadConfigValues();
+
             while (true)
             {
                 try
                 {
-                    var config = new ConfigurationBuilder()
-                    .AddJsonFile("appsettings.json")
-                    .Build();
-
-                    influxClient = new InfluxDBClient(config["influx_url"], config["influx_admin"], config["influx_admin_pw"]);
-                    influxDbName = config["influx_db_name"];
-                    influxDbNameLongterm = config["influx_db_name_longterm"];
-                    aio_url = config["aio_url"];
-                  
                     WriteDataToInfluxDb().Wait();
                     Thread.Sleep(60000); //wait a minute
                 }
@@ -49,6 +42,18 @@ namespace qcells_aio_reader
                 }
 
             }
+        }
+
+        private static void ReadConfigValues()
+        {
+            var config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+            influxClient = new InfluxDBClient(config["influx_url"], config["influx_admin"], config["influx_admin_pw"]);
+            influxDbName = config["influx_db_name"];
+            influxDbNameLongterm = config["influx_db_name_longterm"];
+            aio_url = config["aio_url"];
         }
 
         private static async Task<AIO_Values> FetchValuesFromAIO()
