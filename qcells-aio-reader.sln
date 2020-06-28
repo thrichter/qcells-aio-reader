@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "qcells-aio-reader", "qcells-aio-reader\qcells-aio-reader.csproj", "{F8AEED3B-3BF6-41C0-BC56-02637863606A}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{472C987B-6B80-4638-8D83-B80ED1481BB3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,5 +15,9 @@ Global
 		{F8AEED3B-3BF6-41C0-BC56-02637863606A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8AEED3B-3BF6-41C0-BC56-02637863606A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8AEED3B-3BF6-41C0-BC56-02637863606A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{472C987B-6B80-4638-8D83-B80ED1481BB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{472C987B-6B80-4638-8D83-B80ED1481BB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{472C987B-6B80-4638-8D83-B80ED1481BB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{472C987B-6B80-4638-8D83-B80ED1481BB3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

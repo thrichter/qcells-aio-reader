@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  qcells-aio-reader:
+    image: ${DOCKER_REGISTRY-}qcellsaioreader
+    build:
+      context: .
+      dockerfile: qcells-aio-reader/Dockerfile

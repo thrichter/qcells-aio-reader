@@ -8,6 +8,7 @@ using AdysTech.InfluxDB.Client.Net;
 using Microsoft.Extensions.Configuration;
 using FluentDateTime;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace qcells_aio_reader
 {
@@ -22,27 +23,36 @@ namespace qcells_aio_reader
         private static string ret_policy_longterm = "pvRetPolicyLongterm";
         private static string measurement_points = "AIO";
         private static string measurement_PVmonthly = "PVmonthly";
+        private static SemaphoreSlim  sema = new SemaphoreSlim(1);
 
         static async Task Main(string[] args)
         {
-
-            try
+            while (true)
             {
-                var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .Build();
+                await sema.WaitAsync();
+                try
+                {
+                    var config = new ConfigurationBuilder()
+                    .AddJsonFile("appsettings.json")
+                    .Build();
 
-                influxClient = new InfluxDBClient(config["influx_url"], config["influx_admin"], config["influx_admin_pw"]);
-                influxDbName = config["influx_db_name"];
-                influxDbNameLongterm = config["influx_db_name_longterm"];
-                aio_url = config["aio_url"];
+                    influxClient = new InfluxDBClient(config["influx_url"], config["influx_admin"], config["influx_admin_pw"]);
+                    influxDbName = config["influx_db_name"];
+                    influxDbNameLongterm = config["influx_db_name_longterm"];
+                    aio_url = config["aio_url"];
 
-                var values = await FetchValuesFromAIO();
-                await WriteDataToInfluxDb(values);
-            }
-            catch (Exception ex)
-            {
-                Console.Write(ex.Message);
+                    var values = await FetchValuesFromAIO();
+                    await WriteDataToInfluxDb(values);
+                }
+                catch (Exception ex)
+                {
+                    Console.Write(ex.Message);
+                }
+                finally
+                {
+                    sema.Release();
+                }
+                await Task.Delay(60000);
             }
         }
 
@@ -243,6 +253,7 @@ namespace qcells_aio_reader
                     await CreateRetentionPolicy();      // craete retention policy for minute data points if not exists
                     var point = CreateInfluxSeries(values);  //create the influx point
                     var result = await influxClient.PostPointAsync(influxDbName, point);  //save the data point
+                    Console.Write("Wrote point to influx db");
                 }
                 //Now the longterm data
                 success = await influxClient.CreateDatabaseAsync(influxDbNameLongterm);  //create longeterm db if not exist
@@ -258,6 +269,5 @@ namespace qcells_aio_reader
                 Console.Write(ex.Message);
             }
         }
-
     }
 }
